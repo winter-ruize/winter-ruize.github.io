@@ -946,12 +946,12 @@
 <tr>
 <td><code>context.getExternalCacheDir()</code></td>
 <td>&#x2F;storage&#x2F;emulated&#x2F;0&#x2F;Android&#x2F;data&#x2F;com.example.test&#x2F;cache</td>
-<td>使用这个方法需要写外部存储的权限<br />“<code>&lt;uses-permission android:name=&quot;android.permission.WRITE_EXTERNAL_STORAGE&quot; /&gt;</code>”<br />，调用该方法会返回应用程序的外部文件系统 <code>Environment.getExternalStorageDirectory()</code> 目录的绝对路径，它是用来存放应用的缓存文件，它和 <code>getCacheDir()</code> 目录一样，目录下的文件都会在程序被卸载的时候被清除掉。</td>
+<td>使用这个方法需要写外部存储的权限 <code>WRITE_EXTERNAL_STORAGE</code>，调用该方法会返回应用程序的外部文件系统 <code>Environment.getExternalStorageDirectory()</code> 目录的绝对路径，它是用来存放应用的缓存文件，它和 <code>getCacheDir()</code> 目录一样，目录下的文件都会在程序被卸载的时候被清除掉。</td>
 </tr>
 <tr>
 <td><code>context.getExternalFilesDir(Environment.DIRECTORY_MUSIC)</code><br />……</td>
 <td>&#x2F;storage&#x2F;emulated&#x2F;0&#x2F;Android&#x2F;data&#x2F;com.example.test&#x2F;files&#x2F;Music<br />&#x2F;storage&#x2F;emulated&#x2F;0&#x2F;Android&#x2F;data&#x2F;com.example.test&#x2F;files&#x2F;Podcasts<br />&#x2F;storage&#x2F;emulated&#x2F;0&#x2F;Android&#x2F;data&#x2F;com.example.test&#x2F;files&#x2F;Ringtones<br />&#x2F;storage&#x2F;emulated&#x2F;0&#x2F;Android&#x2F;data&#x2F;com.example.test&#x2F;files&#x2F;Alarms<br />&#x2F;storage&#x2F;emulated&#x2F;0&#x2F;Android&#x2F;data&#x2F;com.example.test&#x2F;files&#x2F;Notifications<br />&#x2F;storage&#x2F;emulated&#x2F;0&#x2F;Android&#x2F;data&#x2F;com.example.test&#x2F;files&#x2F;Pictures<br />&#x2F;storage&#x2F;emulated&#x2F;0&#x2F;Android&#x2F;data&#x2F;com.example.test&#x2F;files&#x2F;Movies</td>
-<td>使用这个方法需要写外部存储的权限<br />“<code>&lt;uses-permission android:name=&quot;android.permission.WRITE_EXTERNAL_STORAGE&quot; /&gt;</code>”<br />这个目录是与应用程序相关的外部文件系统，它和 <code>getExternalCacheDir()</code> 不一样的是只要应用程序存在它就会一直存在，这些文件只属于你的应用，不能被其它人访问。同样，这个目录下的文件在程序被卸载时也会被一同删除。</td>
+<td>使用这个方法需要写外部存储的权限 <code>WRITE_EXTERNAL_STORAGE</code> 这个目录是与应用程序相关的外部文件系统，它和 <code>getExternalCacheDir()</code> 不一样的是只要应用程序存在它就会一直存在，这些文件只属于你的应用，不能被其它人访问。同样，这个目录下的文件在程序被卸载时也会被一同删除。</td>
 </tr>
 <tr>
 <td><code>context.getDatabasePath(xxx)</code></td>
