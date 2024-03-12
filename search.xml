@@ -908,6 +908,143 @@
       </tags>
   </entry>
   <entry>
+    <title>android 各种文件夹路径</title>
+    <url>/posts/8656/</url>
+    <content><![CDATA[<h1 id="android-各种文件夹路径"><a href="#android-各种文件夹路径" class="headerlink" title="android 各种文件夹路径"></a>android 各种文件夹路径</h1><h2 id="1、Context-类方法"><a href="#1、Context-类方法" class="headerlink" title="1、Context 类方法"></a>1、Context 类方法</h2><table>
+<thead>
+<tr>
+<th>method</th>
+<th>dir</th>
+<th>comment</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>context.getCacheDir()</code></td>
+<td>&#x2F;data&#x2F;data&#x2F;com.example.test&#x2F;cache</td>
+<td>返回通过 <code>Context.openFileOutput()</code> 创建和存储的文件系统的绝对路径，应用程序文件，这些文件会在程序被卸载的时候全部删掉。</td>
+</tr>
+<tr>
+<td><code>context.getFilesDir()</code></td>
+<td>&#x2F;data&#x2F;data&#x2F;com.example.test&#x2F;files</td>
+<td>返回应用程序指定的缓存目录，这些文件在设备内存不足时会优先被删除掉。存放在这里的文件是没有任何保障的，可能会随时丢掉。</td>
+</tr>
+<tr>
+<td><code>context.getDir(&quot;test.txt&quot;, Context.MODE_WORLD_WRITEABLE)</code></td>
+<td>&#x2F;data&#x2F;data&#x2F;com.example.test&#x2F;test.txt</td>
+<td>这是一个可以存放你自己应用程序自定义的文件，你可以通过该方法返回的 File 实例来创建或者访问这个目录。<br />注意！该目录下的文件只有你自己的程序可以访问。</td>
+</tr>
+<tr>
+<td><code>context.getPackageResourcePath()</code></td>
+<td>&#x2F;data&#x2F;app&#x2F;xxx.apk</td>
+<td>返回当前应用程序的资源文件路径</td>
+</tr>
+<tr>
+<td><code>context.getPackageCodePath()</code></td>
+<td>&#x2F;data&#x2F;app&#x2F;xxx.apk</td>
+<td>返回当前应用程序的可执行代码文件( APK 文件)的路径</td>
+</tr>
+<tr>
+<td><code>context.getExternalCacheDir()</code></td>
+<td>&#x2F;storage&#x2F;emulated&#x2F;0&#x2F;Android&#x2F;data&#x2F;com.example.test&#x2F;cache</td>
+<td>使用这个方法需要写外部存储的权限<br />“<code>&lt;uses-permission android:name=&quot;android.permission.WRITE_EXTERNAL_STORAGE&quot; /&gt;</code>”<br />，调用该方法会返回应用程序的外部文件系统 <code>Environment.getExternalStorageDirectory()</code> 目录的绝对路径，它是用来存放应用的缓存文件，它和 <code>getCacheDir()</code> 目录一样，目录下的文件都会在程序被卸载的时候被清除掉。</td>
+</tr>
+<tr>
+<td><code>context.getExternalFilesDir(Environment.DIRECTORY_MUSIC)</code><br />……</td>
+<td>&#x2F;storage&#x2F;emulated&#x2F;0&#x2F;Android&#x2F;data&#x2F;com.example.test&#x2F;files&#x2F;Music<br />&#x2F;storage&#x2F;emulated&#x2F;0&#x2F;Android&#x2F;data&#x2F;com.example.test&#x2F;files&#x2F;Podcasts<br />&#x2F;storage&#x2F;emulated&#x2F;0&#x2F;Android&#x2F;data&#x2F;com.example.test&#x2F;files&#x2F;Ringtones<br />&#x2F;storage&#x2F;emulated&#x2F;0&#x2F;Android&#x2F;data&#x2F;com.example.test&#x2F;files&#x2F;Alarms<br />&#x2F;storage&#x2F;emulated&#x2F;0&#x2F;Android&#x2F;data&#x2F;com.example.test&#x2F;files&#x2F;Notifications<br />&#x2F;storage&#x2F;emulated&#x2F;0&#x2F;Android&#x2F;data&#x2F;com.example.test&#x2F;files&#x2F;Pictures<br />&#x2F;storage&#x2F;emulated&#x2F;0&#x2F;Android&#x2F;data&#x2F;com.example.test&#x2F;files&#x2F;Movies</td>
+<td>使用这个方法需要写外部存储的权限<br />“<code>&lt;uses-permission android:name=&quot;android.permission.WRITE_EXTERNAL_STORAGE&quot; /&gt;</code>”<br />这个目录是与应用程序相关的外部文件系统，它和 <code>getExternalCacheDir()</code> 不一样的是只要应用程序存在它就会一直存在，这些文件只属于你的应用，不能被其它人访问。同样，这个目录下的文件在程序被卸载时也会被一同删除。</td>
+</tr>
+<tr>
+<td><code>context.getDatabasePath(xxx)</code></td>
+<td>&#x2F;data&#x2F;data&#x2F;com.example.test&#x2F;databases&#x2F;xxx.db</td>
+<td>对应数据库的全路径名</td>
+</tr>
+<tr>
+<td><code>context.getObbDir()</code></td>
+<td>&#x2F;storage&#x2F;emulated&#x2F;0&#x2F;Android&#x2F;data&#x2F;com.example.test</td>
+<td>返回应用程序的 OBB 文件目录（如果有的话），注意如果该应用程序没有任何 OBB 文件，这个目录是不存在的。</td>
+</tr>
+<tr>
+<td><code>context.getSharedPrefsFile()</code></td>
+<td></td>
+<td>获取 SharedPreferences 文件</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><code>getPackageResourcePath()</code> 用于访问应用程序的资源文件,而 <code>getPackageCodePath()</code> 用于访问应用程序的可执行代码文件。</p>
+<p>在大多数情况下,这两个方法返回的路径是相同的，因为 APK 文件中包含了资源文件和可执行代码文件。但如果应用程序使用了资源文件的分离技术(如通过 Android App Bundle 发布),则这两个路径可能不同。</p>
+</blockquote>
+<h2 id="2、Environment-类方法"><a href="#2、Environment-类方法" class="headerlink" title="2、Environment 类方法"></a>2、Environment 类方法</h2><table>
+<thead>
+<tr>
+<th>method</th>
+<th>dir</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Environment.getDataDirectory()</code></td>
+<td>&#x2F;data</td>
+</tr>
+<tr>
+<td><code>Environment.getDownloadCacheDirectory()</code></td>
+<td>&#x2F;data&#x2F;cache</td>
+</tr>
+<tr>
+<td><code>Environment.getExternalStorageDirectory()</code></td>
+<td>&#x2F;storage&#x2F;emulated&#x2F;0</td>
+</tr>
+<tr>
+<td><code>Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC)</code></td>
+<td>&#x2F;storage&#x2F;emulated&#x2F;0&#x2F;Music</td>
+</tr>
+<tr>
+<td><code>Environment.getRootDirectory()</code></td>
+<td>&#x2F;system</td>
+</tr>
+</tbody></table>
+<h2 id="3、外部存储相关权限设置"><a href="#3、外部存储相关权限设置" class="headerlink" title="3、外部存储相关权限设置"></a>3、外部存储相关权限设置</h2><h4 id="3-1、SDK＜23-Android-6-0-直接在-AndroidManifest-xml-中申请即可"><a href="#3-1、SDK＜23-Android-6-0-直接在-AndroidManifest-xml-中申请即可" class="headerlink" title="3.1、SDK＜23(Android 6.0) 直接在 AndroidManifest.xml 中申请即可"></a>3.1、SDK＜23(Android 6.0) 直接在 AndroidManifest.xml 中申请即可</h4><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">uses-permission</span> <span class="attr">android:name</span>=<span class="string">&quot;android.permission.WRITE_EXTERNAL_STORAGE&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">uses-permission</span> <span class="attr">android:name</span>=<span class="string">&quot;android.permission.READ_EXTERNAL_STORAGE&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="3-2、23-Android-6-0-≤SDK＜30-Android-11-在-AndroidManifest-xml-中申请，并且代码中也需要动态申请"><a href="#3-2、23-Android-6-0-≤SDK＜30-Android-11-在-AndroidManifest-xml-中申请，并且代码中也需要动态申请" class="headerlink" title="3.2、23(Android 6.0)≤SDK＜30(Android 11) 在 AndroidManifest.xml 中申请，并且代码中也需要动态申请"></a>3.2、23(Android 6.0)≤SDK＜30(Android 11) 在 AndroidManifest.xml 中申请，并且代码中也需要动态申请</h4><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">uses-permission</span> <span class="attr">android:name</span>=<span class="string">&quot;android.permission.WRITE_EXTERNAL_STORAGE&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">uses-permission</span> <span class="attr">android:name</span>=<span class="string">&quot;android.permission.READ_EXTERNAL_STORAGE&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">requestPermission</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="comment">//判断是否已经赋予权限</span></span><br><span class="line">    <span class="keyword">if</span> (ContextCompat.checkSelfPermission(<span class="built_in">this</span>,Manifest.permission.WRITE_EXTERNAL_STORAGE) != PERMISSION_GRANTED</span><br><span class="line">        || ContextCompat.checkSelfPermission(<span class="built_in">this</span>, Manifest.permission.READ_EXTERNAL_STORAGE) != PERMISSION_GRANTED) &#123;</span><br><span class="line">        ActivityCompat.requestPermissions(<span class="built_in">this</span>, <span class="keyword">new</span> <span class="title class_">String</span>[]&#123;</span><br><span class="line">            Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE&#125;, <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onRequestPermissionsResult</span><span class="params">(<span class="type">int</span> requestCode, String[] permissions, <span class="type">int</span>[] grantResults)</span> &#123;</span><br><span class="line">    <span class="built_in">super</span>.onRequestPermissionsResult(requestCode, permissions, grantResults);</span><br><span class="line">    <span class="keyword">if</span> (requestCode == <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (ContextCompat.checkSelfPermission(<span class="built_in">this</span>, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PERMISSION_GRANTED</span><br><span class="line">            || ContextCompat.checkSelfPermission(<span class="built_in">this</span>, Manifest.permission.READ_EXTERNAL_STORAGE != PERMISSION_GRANTED) &#123;</span><br><span class="line">            Toast.makeText(<span class="built_in">this</span>, <span class="string">&quot;请开启存储权限&quot;</span>, Toast.LENGTH_SHORT).show();</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            Toast.makeText(<span class="built_in">this</span>, <span class="string">&quot;存储权限开启成功&quot;</span>, Toast.LENGTH_SHORT).show();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-3、SDK≥30-Android-11-在-AndroidManifest-xml-中申请，并且代码中也需要动态申请"><a href="#3-3、SDK≥30-Android-11-在-AndroidManifest-xml-中申请，并且代码中也需要动态申请" class="headerlink" title="3.3、SDK≥30(Android 11) 在 AndroidManifest.xml 中申请，并且代码中也需要动态申请"></a>3.3、SDK≥30(Android 11) 在 AndroidManifest.xml 中申请，并且代码中也需要动态申请</h4><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">uses-permission</span> <span class="attr">android:name</span>=<span class="string">&quot;android.permission.WRITE_EXTERNAL_STORAGE&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">uses-permission</span> <span class="attr">android:name</span>=<span class="string">&quot;android.permission.READ_EXTERNAL_STORAGE&quot;</span> /&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- 如果Android11及以上申请以上的读写存储权限，用户允许后，允许的只是媒体文件，并不能操作手机的文件管理（例如：创建文件到指定目录下） --&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- 只有申请通过 ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION 此权限才允许操作手机中的文件管理 --&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!-- Android 11 新增 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">uses-permission</span> <span class="attr">android:name</span>=<span class="string">&quot;android.permission.MANAGE_EXTERNAL_STORAGE&quot;</span> /&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">application</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:name</span>=<span class="string">&quot;.application.MainApplication&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:allowBackup</span>=<span class="string">&quot;true&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:icon</span>=<span class="string">&quot;@mipmap/biao&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:label</span>=<span class="string">&quot;@string/app_name&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:persistent</span>=<span class="string">&quot;true&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:requestLegacyExternalStorage</span>=<span class="string">&quot;true&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:sharedUserId</span>=<span class="string">&quot;android.uid.system&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:supportsRtl</span>=<span class="string">&quot;true&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:theme</span>=<span class="string">&quot;@style/AppTheme&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:preserveLegacyExternalStorage</span>=<span class="string">&quot;true&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:usesCleartextTraffic</span>=<span class="string">&quot;true&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">application</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- android 10 根目录创建文件夹 android:requestLegacyExternalStorage=&quot;true&quot; --&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- android 11 根目录创建文件夹 android:preserveLegacyExternalStorage=&quot;true&quot; --&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- 在 Android11 的设备上覆盖安装时，才能访问旧版存储位置，卸载重装会失效 --&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">requestPermission</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.R) &#123;</span><br><span class="line">        <span class="comment">// 先判断有没有权限</span></span><br><span class="line">        <span class="keyword">if</span> (!Environment.isExternalStorageManager()) &#123;</span><br><span class="line">            <span class="comment">//跳转到设置界面引导用户打开</span></span><br><span class="line">            <span class="type">Intent</span> <span class="variable">intent</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Intent</span>(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);</span><br><span class="line">            intent.setData(Uri.parse(<span class="string">&quot;package:&quot;</span> + getPackageName()));</span><br><span class="line">            startActivityForResult(intent, <span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SuppressLint(&quot;NewApi&quot;)</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">onActivityResult</span><span class="params">(<span class="type">int</span> requestCode, <span class="type">int</span> resultCode, Intent data)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (requestCode == <span class="number">1</span>)&#123;</span><br><span class="line">        <span class="keyword">if</span> (Environment.isExternalStorageManager())&#123;</span><br><span class="line">            <span class="comment">// ......</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            showToast(<span class="string">&quot;存储权限获取失败&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="4、Android-13-媒体权限"><a href="#4、Android-13-媒体权限" class="headerlink" title="4、Android 13 媒体权限"></a>4、Android 13 媒体权限</h2><p>在 Android 13 之前，应用如果想要访问设备中的媒体资源的话，都必须通过 <code>READ_EXTERNAL_STORAGE</code> 权限才能实现。从 Android 13 开始，系统将 <code>READ_EXTERNAL_STORAGE</code> 细分为了三个更加明确的权限，分别用于访问用户的三类媒体资源：Image、Video、Audio，从而让用户能够按需授权，避免隐私风险无序扩大。</p>
+<table>
+<thead>
+<tr>
+<th>媒体类型</th>
+<th>请求权限</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Image</td>
+<td>READ_MEDIA_IMAGES</td>
+</tr>
+<tr>
+<td>Video</td>
+<td>READ_MEDIA_VIDEO</td>
+</tr>
+<tr>
+<td>Audio</td>
+<td>READ_MEDIA_AUDIO</td>
+</tr>
+</tbody></table>
+<p>使用时按需进行申请即可</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">uses-permission</span> <span class="attr">android:name</span>=<span class="string">&quot;android.permission.READ_MEDIA_IMAGES&quot;</span> <span class="attr">android:minSdkVersion</span> = <span class="string">&quot;33&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">uses-permission</span> <span class="attr">android:name</span>=<span class="string">&quot;android.permission.READ_MEDIA_AUDIO&quot;</span> <span class="attr">android:minSdkVersion</span> = <span class="string">&quot;33&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">uses-permission</span> <span class="attr">android:name</span>=<span class="string">&quot;android.permission.READ_MEDIA_VIDEO&quot;</span> <span class="attr">android:minSdkVersion</span> = <span class="string">&quot;33&quot;</span>/&gt;</span></span><br><span class="line"><span class="comment">&lt;!--  向前兼容  --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">uses-permission</span> <span class="attr">android:name</span>=<span class="string">&quot;android.permission.READ_EXTERNAL_STORAGE&quot;</span> <span class="attr">android:maxSdkVersion</span>=<span class="string">&quot;32&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>Android</category>
+        <category>App</category>
+      </categories>
+      <tags>
+        <tag>permission</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>android.view.KeyEvent</title>
     <url>/posts/39c7/</url>
     <content><![CDATA[<h1 id="android-view-KeyEvent"><a href="#android-view-KeyEvent" class="headerlink" title="android.view.KeyEvent"></a>android.view.KeyEvent</h1><table>
