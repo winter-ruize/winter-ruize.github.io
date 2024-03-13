@@ -542,6 +542,22 @@
       </tags>
   </entry>
   <entry>
+    <title>Android 多媒体框架简介</title>
+    <url>/posts/f4b/</url>
+    <content><![CDATA[<h1 id="Android-多媒体框架简介"><a href="#Android-多媒体框架简介" class="headerlink" title="Android 多媒体框架简介"></a>Android 多媒体框架简介</h1><object data="/pdf/Android 多媒体框架简介.pdf" type="application/pdf" width="100%" height="877px">
+]]></content>
+      <categories>
+        <category>Android</category>
+        <category>Media</category>
+      </categories>
+      <tags>
+        <tag>C++</tag>
+        <tag>Binder</tag>
+        <tag>Android</tag>
+        <tag>Media</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Android 开机启动流程</title>
     <url>/posts/ce79/</url>
     <content><![CDATA[<h1 id="Android-开机启动流程"><a href="#Android-开机启动流程" class="headerlink" title="Android 开机启动流程"></a>Android 开机启动流程</h1><p>Android 系统完整的启动流程，从系统层次角度可分为 Linux 系统层、Android 系统服务层、Zygote 进程模型三个阶段。</p>
