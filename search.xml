@@ -382,6 +382,47 @@
       </tags>
   </entry>
   <entry>
+    <title>Android P&amp;Q&amp;R&amp;S User 版本开启 adb root 权限</title>
+    <url>/posts/6ba1/</url>
+    <content><![CDATA[<h1 id="Android-P-Q-R-S-User-版本开启-adb-root-权限"><a href="#Android-P-Q-R-S-User-版本开启-adb-root-权限" class="headerlink" title="Android P&amp;Q&amp;R&amp;S User 版本开启 adb root 权限"></a>Android P&amp;Q&amp;R&amp;S User 版本开启 adb root 权限</h1><blockquote>
+<p><strong>注意：</strong>本方法在 R 和 S 上验证可行，P 和 Q 虽未验证，但应该也是可以的。</p>
+</blockquote>
+<h3 id="1、修改-build-make-core-main-mk-文件："><a href="#1、修改-build-make-core-main-mk-文件：" class="headerlink" title="1、修改 build/make/core/main.mk 文件："></a>1、修改 <code>build/make/core/main.mk</code> 文件：</h3><p>主要原理为修改系统相关属性使得 adb 具有 root 权限，使用到的属性如下：</p>
+<table>
+<thead>
+<tr>
+<th align="left">property</th>
+<th align="left">description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">ro.secure</td>
+<td align="left">0：开启 root 权限<br />1：关闭 root 权限</td>
+</tr>
+<tr>
+<td align="left">ro.adb.secure</td>
+<td align="left">0：关闭 adb RSA 指纹认证<br />1：开启 adb RSA 指纹认证</td>
+</tr>
+<tr>
+<td align="left">ro.debuggable</td>
+<td align="left">0：关闭adb debug<br />1：开启adb debug</td>
+</tr>
+</tbody></table>
+<h4 id="1-1、Android-R-可参考如下示例修改："><a href="#1-1、Android-R-可参考如下示例修改：" class="headerlink" title="1.1、Android R 可参考如下示例修改："></a>1.1、Android R 可参考如下示例修改：</h4><figure class="highlight diff"><table><tr><td class="code"><pre><span class="line"><span class="comment">diff --git a/build/make/core/main.mk b/build/make/core/main.mk</span></span><br><span class="line"><span class="comment">index e3aed31868..ddbfdfef65 100755</span></span><br><span class="line"><span class="comment">--- a/build/make/core/main.mk</span></span><br><span class="line"><span class="comment">+++ b/build/make/core/main.mk</span></span><br><span class="line"><span class="meta">@@ -263,11 +263,11 @@</span> enable_target_debugging := true</span><br><span class="line"> tags_to_install :=</span><br><span class="line"> ifneq (,$(user_variant))</span><br><span class="line">   # Target is secure in user builds.</span><br><span class="line"><span class="deletion">-  ADDITIONAL_DEFAULT_PROPERTIES += ro.secure=1</span></span><br><span class="line"><span class="addition">+  ADDITIONAL_DEFAULT_PROPERTIES += ro.secure=0</span></span><br><span class="line">   ADDITIONAL_DEFAULT_PROPERTIES += security.perf_harden=1</span><br><span class="line"></span><br><span class="line">   ifeq ($(user_variant),user)</span><br><span class="line"><span class="deletion">-    ADDITIONAL_DEFAULT_PROPERTIES += ro.adb.secure=1</span></span><br><span class="line"><span class="addition">+    ADDITIONAL_DEFAULT_PROPERTIES += ro.adb.secure=0</span></span><br><span class="line">   endif</span><br><span class="line"></span><br><span class="line">   ifeq ($(user_variant),userdebug)</span><br><span class="line"><span class="meta">@@ -297,7 +297,7 @@</span> ifeq (true,$(strip $(enable_target_debugging)))</span><br><span class="line">   ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.lockprof.threshold=500</span><br><span class="line"> else # !enable_target_debugging</span><br><span class="line">   # Target is less debuggable and adbd is off by default</span><br><span class="line"><span class="deletion">-  ADDITIONAL_DEFAULT_PROPERTIES += ro.debuggable=0</span></span><br><span class="line"><span class="addition">+  ADDITIONAL_DEFAULT_PROPERTIES += ro.debuggable=1</span></span><br><span class="line"> endif # !enable_target_debugging</span><br><span class="line"></span><br><span class="line"> ## eng ##</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-2、Android-S-可参考如下示例修改："><a href="#1-2、Android-S-可参考如下示例修改：" class="headerlink" title="1.2、Android S 可参考如下示例修改："></a>1.2、Android S 可参考如下示例修改：</h4><figure class="highlight diff"><table><tr><td class="code"><pre><span class="line"><span class="comment">diff --git a/build/make/core/main.mk b/build/make/core/main.mk</span></span><br><span class="line"><span class="comment">index 3f53a09023..b92c152fe3 100644</span></span><br><span class="line"><span class="comment">--- a/build/make/core/main.mk</span></span><br><span class="line"><span class="comment">+++ b/build/make/core/main.mk</span></span><br><span class="line"><span class="meta">@@ -372,11 +372,11 @@</span> enable_target_debugging := true</span><br><span class="line"> tags_to_install :=</span><br><span class="line"> ifneq (,$(user_variant))</span><br><span class="line">   # Target is secure in user builds.</span><br><span class="line"><span class="deletion">-  ADDITIONAL_SYSTEM_PROPERTIES += ro.secure=1</span></span><br><span class="line"><span class="addition">+  ADDITIONAL_SYSTEM_PROPERTIES += ro.secure=0</span></span><br><span class="line">   ADDITIONAL_SYSTEM_PROPERTIES += security.perf_harden=1</span><br><span class="line"></span><br><span class="line">   ifeq ($(user_variant),user)</span><br><span class="line"><span class="deletion">-    ADDITIONAL_SYSTEM_PROPERTIES += ro.adb.secure=1</span></span><br><span class="line"><span class="addition">+    ADDITIONAL_SYSTEM_PROPERTIES += ro.adb.secure=0</span></span><br><span class="line">   endif</span><br><span class="line"></span><br><span class="line">   ifeq ($(user_variant),userdebug)</span><br><span class="line"><span class="meta">@@ -406,7 +406,7 @@</span> ifeq (true,$(strip $(enable_target_debugging)))</span><br><span class="line">   ADDITIONAL_SYSTEM_PROPERTIES += dalvik.vm.lockprof.threshold=500</span><br><span class="line"> else # !enable_target_debugging</span><br><span class="line">   # Target is less debuggable and adbd is off by default</span><br><span class="line"><span class="deletion">-  ADDITIONAL_SYSTEM_PROPERTIES += ro.debuggable=0</span></span><br><span class="line"><span class="addition">+  ADDITIONAL_SYSTEM_PROPERTIES += ro.debuggable=1</span></span><br><span class="line"> endif # !enable_target_debugging</span><br><span class="line"></span><br><span class="line"> ## eng ##</span><br></pre></td></tr></table></figure>
+
+<h3 id="2、修改-system-core-init-selinux-cpp-文件，关闭-selinux："><a href="#2、修改-system-core-init-selinux-cpp-文件，关闭-selinux：" class="headerlink" title="2、修改 system/core/init/selinux.cpp 文件，关闭 selinux："></a>2、修改 <code>system/core/init/selinux.cpp</code> 文件，关闭 selinux：</h3><figure class="highlight diff"><table><tr><td class="code"><pre><span class="line"><span class="comment">diff --git a/system/core/init/selinux.cpp b/system/core/init/selinux.cpp</span></span><br><span class="line"><span class="comment">index 5a0255acd2..66cf23ee18 100644</span></span><br><span class="line"><span class="comment">--- a/system/core/init/selinux.cpp</span></span><br><span class="line"><span class="comment">+++ b/system/core/init/selinux.cpp</span></span><br><span class="line"><span class="meta">@@ -104,6 +104,7 @@</span> EnforcingStatus StatusFromCmdline() &#123;</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"> bool IsEnforcing() &#123;</span><br><span class="line"><span class="addition">+    return false; //add to close selinux</span></span><br><span class="line">     if (ALLOW_PERMISSIVE_SELINUX) &#123;</span><br><span class="line">         return StatusFromCmdline() == SELINUX_ENFORCING;</span><br><span class="line">     &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3、编译系统固件，烧录开发板，开机；"><a href="#3、编译系统固件，烧录开发板，开机；" class="headerlink" title="3、编译系统固件，烧录开发板，开机；"></a>3、编译系统固件，烧录开发板，开机；</h3><h3 id="4、如果开机-adb-连接不上，可能是没有打开-OTG-开关，打开-OTG-开关再尝试-adb-能否连接上设备；"><a href="#4、如果开机-adb-连接不上，可能是没有打开-OTG-开关，打开-OTG-开关再尝试-adb-能否连接上设备；" class="headerlink" title="4、如果开机 adb 连接不上，可能是没有打开 OTG 开关，打开 OTG 开关再尝试 adb 能否连接上设备；"></a>4、如果开机 adb 连接不上，可能是没有打开 OTG 开关，打开 OTG 开关再尝试 adb 能否连接上设备；</h3><h3 id="5、进入-adb-shell-，如果查看到-shell-提示符为-则表示具有-root-权限。"><a href="#5、进入-adb-shell-，如果查看到-shell-提示符为-则表示具有-root-权限。" class="headerlink" title="5、进入 adb shell ，如果查看到 shell 提示符为 # 则表示具有 root 权限。"></a>5、进入 <code>adb shell</code> ，如果查看到 shell 提示符为 <code>#</code> 则表示具有 root 权限。</h3>]]></content>
+      <categories>
+        <category>Android</category>
+      </categories>
+      <tags>
+        <tag>adb</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Android Binder(C++ 实现)</title>
     <url>/posts/e1e6/</url>
     <content><![CDATA[<h1 id="Android-Binder-C-实现"><a href="#Android-Binder-C-实现" class="headerlink" title="Android Binder(C++ 实现)"></a>Android Binder(C++ 实现)</h1><h2 id="1、C-Binder-使用规范"><a href="#1、C-Binder-使用规范" class="headerlink" title="1、C++ Binder 使用规范"></a>1、C++ Binder 使用规范</h2><p><strong>Android Binder C++开发的架构图如下：</strong></p>
@@ -501,47 +542,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Android P&amp;Q&amp;R&amp;S User 版本开启 adb root 权限</title>
-    <url>/posts/6ba1/</url>
-    <content><![CDATA[<h1 id="Android-P-Q-R-S-User-版本开启-adb-root-权限"><a href="#Android-P-Q-R-S-User-版本开启-adb-root-权限" class="headerlink" title="Android P&amp;Q&amp;R&amp;S User 版本开启 adb root 权限"></a>Android P&amp;Q&amp;R&amp;S User 版本开启 adb root 权限</h1><blockquote>
-<p><strong>注意：</strong>本方法在 R 和 S 上验证可行，P 和 Q 虽未验证，但应该也是可以的。</p>
-</blockquote>
-<h3 id="1、修改-build-make-core-main-mk-文件："><a href="#1、修改-build-make-core-main-mk-文件：" class="headerlink" title="1、修改 build/make/core/main.mk 文件："></a>1、修改 <code>build/make/core/main.mk</code> 文件：</h3><p>主要原理为修改系统相关属性使得 adb 具有 root 权限，使用到的属性如下：</p>
-<table>
-<thead>
-<tr>
-<th align="left">property</th>
-<th align="left">description</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">ro.secure</td>
-<td align="left">0：开启 root 权限<br />1：关闭 root 权限</td>
-</tr>
-<tr>
-<td align="left">ro.adb.secure</td>
-<td align="left">0：关闭 adb RSA 指纹认证<br />1：开启 adb RSA 指纹认证</td>
-</tr>
-<tr>
-<td align="left">ro.debuggable</td>
-<td align="left">0：关闭adb debug<br />1：开启adb debug</td>
-</tr>
-</tbody></table>
-<h4 id="1-1、Android-R-可参考如下示例修改："><a href="#1-1、Android-R-可参考如下示例修改：" class="headerlink" title="1.1、Android R 可参考如下示例修改："></a>1.1、Android R 可参考如下示例修改：</h4><figure class="highlight diff"><table><tr><td class="code"><pre><span class="line"><span class="comment">diff --git a/build/make/core/main.mk b/build/make/core/main.mk</span></span><br><span class="line"><span class="comment">index e3aed31868..ddbfdfef65 100755</span></span><br><span class="line"><span class="comment">--- a/build/make/core/main.mk</span></span><br><span class="line"><span class="comment">+++ b/build/make/core/main.mk</span></span><br><span class="line"><span class="meta">@@ -263,11 +263,11 @@</span> enable_target_debugging := true</span><br><span class="line"> tags_to_install :=</span><br><span class="line"> ifneq (,$(user_variant))</span><br><span class="line">   # Target is secure in user builds.</span><br><span class="line"><span class="deletion">-  ADDITIONAL_DEFAULT_PROPERTIES += ro.secure=1</span></span><br><span class="line"><span class="addition">+  ADDITIONAL_DEFAULT_PROPERTIES += ro.secure=0</span></span><br><span class="line">   ADDITIONAL_DEFAULT_PROPERTIES += security.perf_harden=1</span><br><span class="line"></span><br><span class="line">   ifeq ($(user_variant),user)</span><br><span class="line"><span class="deletion">-    ADDITIONAL_DEFAULT_PROPERTIES += ro.adb.secure=1</span></span><br><span class="line"><span class="addition">+    ADDITIONAL_DEFAULT_PROPERTIES += ro.adb.secure=0</span></span><br><span class="line">   endif</span><br><span class="line"></span><br><span class="line">   ifeq ($(user_variant),userdebug)</span><br><span class="line"><span class="meta">@@ -297,7 +297,7 @@</span> ifeq (true,$(strip $(enable_target_debugging)))</span><br><span class="line">   ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.lockprof.threshold=500</span><br><span class="line"> else # !enable_target_debugging</span><br><span class="line">   # Target is less debuggable and adbd is off by default</span><br><span class="line"><span class="deletion">-  ADDITIONAL_DEFAULT_PROPERTIES += ro.debuggable=0</span></span><br><span class="line"><span class="addition">+  ADDITIONAL_DEFAULT_PROPERTIES += ro.debuggable=1</span></span><br><span class="line"> endif # !enable_target_debugging</span><br><span class="line"></span><br><span class="line"> ## eng ##</span><br></pre></td></tr></table></figure>
-
-<h4 id="1-2、Android-S-可参考如下示例修改："><a href="#1-2、Android-S-可参考如下示例修改：" class="headerlink" title="1.2、Android S 可参考如下示例修改："></a>1.2、Android S 可参考如下示例修改：</h4><figure class="highlight diff"><table><tr><td class="code"><pre><span class="line"><span class="comment">diff --git a/build/make/core/main.mk b/build/make/core/main.mk</span></span><br><span class="line"><span class="comment">index 3f53a09023..b92c152fe3 100644</span></span><br><span class="line"><span class="comment">--- a/build/make/core/main.mk</span></span><br><span class="line"><span class="comment">+++ b/build/make/core/main.mk</span></span><br><span class="line"><span class="meta">@@ -372,11 +372,11 @@</span> enable_target_debugging := true</span><br><span class="line"> tags_to_install :=</span><br><span class="line"> ifneq (,$(user_variant))</span><br><span class="line">   # Target is secure in user builds.</span><br><span class="line"><span class="deletion">-  ADDITIONAL_SYSTEM_PROPERTIES += ro.secure=1</span></span><br><span class="line"><span class="addition">+  ADDITIONAL_SYSTEM_PROPERTIES += ro.secure=0</span></span><br><span class="line">   ADDITIONAL_SYSTEM_PROPERTIES += security.perf_harden=1</span><br><span class="line"></span><br><span class="line">   ifeq ($(user_variant),user)</span><br><span class="line"><span class="deletion">-    ADDITIONAL_SYSTEM_PROPERTIES += ro.adb.secure=1</span></span><br><span class="line"><span class="addition">+    ADDITIONAL_SYSTEM_PROPERTIES += ro.adb.secure=0</span></span><br><span class="line">   endif</span><br><span class="line"></span><br><span class="line">   ifeq ($(user_variant),userdebug)</span><br><span class="line"><span class="meta">@@ -406,7 +406,7 @@</span> ifeq (true,$(strip $(enable_target_debugging)))</span><br><span class="line">   ADDITIONAL_SYSTEM_PROPERTIES += dalvik.vm.lockprof.threshold=500</span><br><span class="line"> else # !enable_target_debugging</span><br><span class="line">   # Target is less debuggable and adbd is off by default</span><br><span class="line"><span class="deletion">-  ADDITIONAL_SYSTEM_PROPERTIES += ro.debuggable=0</span></span><br><span class="line"><span class="addition">+  ADDITIONAL_SYSTEM_PROPERTIES += ro.debuggable=1</span></span><br><span class="line"> endif # !enable_target_debugging</span><br><span class="line"></span><br><span class="line"> ## eng ##</span><br></pre></td></tr></table></figure>
-
-<h3 id="2、修改-system-core-init-selinux-cpp-文件，关闭-selinux："><a href="#2、修改-system-core-init-selinux-cpp-文件，关闭-selinux：" class="headerlink" title="2、修改 system/core/init/selinux.cpp 文件，关闭 selinux："></a>2、修改 <code>system/core/init/selinux.cpp</code> 文件，关闭 selinux：</h3><figure class="highlight diff"><table><tr><td class="code"><pre><span class="line"><span class="comment">diff --git a/system/core/init/selinux.cpp b/system/core/init/selinux.cpp</span></span><br><span class="line"><span class="comment">index 5a0255acd2..66cf23ee18 100644</span></span><br><span class="line"><span class="comment">--- a/system/core/init/selinux.cpp</span></span><br><span class="line"><span class="comment">+++ b/system/core/init/selinux.cpp</span></span><br><span class="line"><span class="meta">@@ -104,6 +104,7 @@</span> EnforcingStatus StatusFromCmdline() &#123;</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"> bool IsEnforcing() &#123;</span><br><span class="line"><span class="addition">+    return false; //add to close selinux</span></span><br><span class="line">     if (ALLOW_PERMISSIVE_SELINUX) &#123;</span><br><span class="line">         return StatusFromCmdline() == SELINUX_ENFORCING;</span><br><span class="line">     &#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="3、编译系统固件，烧录开发板，开机；"><a href="#3、编译系统固件，烧录开发板，开机；" class="headerlink" title="3、编译系统固件，烧录开发板，开机；"></a>3、编译系统固件，烧录开发板，开机；</h3><h3 id="4、如果开机-adb-连接不上，可能是没有打开-OTG-开关，打开-OTG-开关再尝试-adb-能否连接上设备；"><a href="#4、如果开机-adb-连接不上，可能是没有打开-OTG-开关，打开-OTG-开关再尝试-adb-能否连接上设备；" class="headerlink" title="4、如果开机 adb 连接不上，可能是没有打开 OTG 开关，打开 OTG 开关再尝试 adb 能否连接上设备；"></a>4、如果开机 adb 连接不上，可能是没有打开 OTG 开关，打开 OTG 开关再尝试 adb 能否连接上设备；</h3><h3 id="5、进入-adb-shell-，如果查看到-shell-提示符为-则表示具有-root-权限。"><a href="#5、进入-adb-shell-，如果查看到-shell-提示符为-则表示具有-root-权限。" class="headerlink" title="5、进入 adb shell ，如果查看到 shell 提示符为 # 则表示具有 root 权限。"></a>5、进入 <code>adb shell</code> ，如果查看到 shell 提示符为 <code>#</code> 则表示具有 root 权限。</h3>]]></content>
-      <categories>
-        <category>Android</category>
-      </categories>
-      <tags>
-        <tag>adb</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Android 多媒体框架简介</title>
     <url>/posts/f4b/</url>
     <content><![CDATA[<h1 id="Android-多媒体框架简介"><a href="#Android-多媒体框架简介" class="headerlink" title="Android 多媒体框架简介"></a>Android 多媒体框架简介</h1><object data="/pdf/Android 多媒体框架简介.pdf" type="application/pdf" width="100%" height="877px">
@@ -555,95 +555,6 @@
         <tag>Binder</tag>
         <tag>Android</tag>
         <tag>Media</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Android 开机启动流程</title>
-    <url>/posts/ce79/</url>
-    <content><![CDATA[<h1 id="Android-开机启动流程"><a href="#Android-开机启动流程" class="headerlink" title="Android 开机启动流程"></a>Android 开机启动流程</h1><p>Android 系统完整的启动流程，从系统层次角度可分为 Linux 系统层、Android 系统服务层、Zygote 进程模型三个阶段。</p>
-<p>从开机到启动 Home Launcher 完成具体的任务细节可分为七个步骤：</p>
-<p><img src="/images/loading.gif" data-original="https://github.com/winter-ruize/blog_images/raw/main/images/2024/01/31/1706702688201.png" alt="image-20230202140213148"></p>
-<p><strong>启动流程图如下：</strong></p>
-<p><img src="/images/loading.gif" data-original="https://github.com/winter-ruize/blog_images/raw/main/images/2024/01/31/1706702688312.png" alt="image-20230202144415699"></p>
-<h2 id="1、启动电源以及系统启动"><a href="#1、启动电源以及系统启动" class="headerlink" title="1、启动电源以及系统启动"></a>1、启动电源以及系统启动</h2><p>当电源按钮按下时引导芯片从预定义的地方（固化在ROM）开始执行。加载引导程序BootLoader到RAM中，然后执行。</p>
-<h2 id="2、引导程序-BootLoader"><a href="#2、引导程序-BootLoader" class="headerlink" title="2、引导程序 BootLoader"></a>2、引导程序 BootLoader</h2><p>引导程序 BootLoader 是在 Android 操作系统开始运行前的一个小程序，是运行的第一个程序。主要有检查RAM，初始化硬件参数等功能，当然它的最终目的是把操作系统给拉起来。</p>
-<blockquote>
-<p>源码文件路径：<code>/bootable/bootloader/legacy/</code></p>
-<p>BootLoader的主要功能分析：</p>
-<p>其实 Bootloader 主要的必须的作用只有一个：就是把操作系统映像文件拷贝到 RAM 中去，然后跳转到它的入口处去执行，我们称之为启动加载模式，该过程没有用户的介入，是它正常工作的模式。它的步骤如下：</p>
-<p>Stage1:</p>
-<ol>
-<li>硬件设备初始化。为 stage2 的执行及随后内核的执行准备好基本的硬件环境</li>
-<li>为加载 stage2 准备 RAM 空间。为了获得更好的执行速度，通常吧 stage2 加载到 RAM 中执行</li>
-<li>复制 stage2 的代码到 RAM 中</li>
-<li>设置好堆栈</li>
-<li>跳转到 stage2 的 c 程序入口</li>
-</ol>
-<p>Stage2：</p>
-<ol>
-<li>初始化本阶段要使用的硬件设备</li>
-<li>检测系统内存映射</li>
-<li>将内核映像和根文件系统映像从 flash 读到 RAM 中</li>
-<li>为内核设置启动参数</li>
-<li>调用内核</li>
-</ol>
-</blockquote>
-<h2 id="3、Linux-内核启动"><a href="#3、Linux-内核启动" class="headerlink" title="3、Linux 内核启动"></a>3、Linux 内核启动</h2><p>当内核启动时，设置缓存、被保护存储器、计划列表、加载驱动。当内核完成系统设置后，它首先会在系统文件中寻找 init.rc 文件，并启动 <strong>init.rc 进程</strong>。</p>
-<p>这个入口的函数是 <code>start_kernel</code> 函数。 <code>start_kernel</code> 函数完成了内核的大部分初始化工作。实际上，可以将 <code>start_kernel</code> 函数看做内核的main函数。 <code>start_kernel</code> 函数执行到最后调用了 <code>reset_init</code> 函数进行后续的初始化。 <code>reset_init</code> 函数最主要的任务就是启动内核线程 <code>kernel_init</code>。<code>kernel_init</code> 函数将完成设备驱动程序的初始化，并调用 <code>init_post</code> 函数启动用户空间的 init 进程。到 <code>init_post</code> 函数为止，内核的初始化已经基本完成。</p>
-<blockquote>
-<p>源码文件路径：<code>/kernel_imx/init/main.c</code></p>
-</blockquote>
-<h2 id="4、init-进程启动"><a href="#4、init-进程启动" class="headerlink" title="4、init 进程启动"></a>4、init 进程启动</h2><p>当初始化内核之后，就会启动一个相当重要的祖先进程，也就是 <strong>init 进程</strong>，在Linux中所有的进程都是由 init 进程直接或间接 fork 出来的。init 进程负责创建系统中最关键的几个子进程，尤其是 Zygote。另外，它还提供了 property service（属性服务），类似于 windows 系统的注册表服务。</p>
-<p>init进程会完成很多工作，主要完成以下三件事：</p>
-<ol>
-<li>创建和挂载启动所需文件目录；</li>
-<li>初始化和启动系统属性服务；</li>
-<li>解析 init.rc 配置文件并启动 Zygote 进程。</li>
-</ol>
-<p>在Android系统中，会有个 <code>init.rc</code> 脚本。init 进程一启动就会读取并解析这个脚本文件，把其中的元素整理成自己的数据结构（链表）。</p>
-<blockquote>
-<p>源码文件路径：<br><code>/system/core/init/init.c</code><br><code>/system/core/rootdir/init.rc</code><br><code>/system/core/init/readme.txt</code></p>
-</blockquote>
-<h2 id="5、Zygote-进程启动"><a href="#5、Zygote-进程启动" class="headerlink" title="5、Zygote 进程启动"></a>5、Zygote 进程启动</h2><p>Zygote 进程为所有 Java 进程的父进程。主要会完成以下任务：</p>
-<ol>
-<li>创建 Java 虚拟机并为 Java 虚拟机注册 JNI 方法；</li>
-<li>创建服务端 Socket；</li>
-<li>预加载类和资源；</li>
-<li>启动 SystemServer进程；</li>
-<li>等待 AMS 请求创建新的应用进程。</li>
-</ol>
-<p>在zygote开启的时候，会调用 <code>ZygoteInit.main()</code> 进行初始化。源码如下：</p>
-<blockquote>
-<p>源码文件路径：<code>/frameworks/base/core/java/com/android/internal/os/ZygoteInit.java</code></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String argv[])</span> &#123;</span><br><span class="line"></span><br><span class="line">	......</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 加载zygote的时候，会传入参数，startSystemServer 变为true</span></span><br><span class="line">    <span class="type">boolean</span> <span class="variable">startSystemServer</span> <span class="operator">=</span> <span class="literal">false</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt; argv.length; i++) &#123;</span><br><span class="line">		<span class="keyword">if</span> (<span class="string">&quot;start-system-server&quot;</span>.equals(argv[i])) &#123;</span><br><span class="line">			startSystemServer = <span class="literal">true</span>;</span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> (argv[i].startsWith(ABI_LIST_ARG)) &#123;</span><br><span class="line">			abiList = argv[i].substring(ABI_LIST_ARG.length());</span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> (argv[i].startsWith(SOCKET_NAME_ARG)) &#123;</span><br><span class="line">			socketName = argv[i].substring(SOCKET_NAME_ARG.length());</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(<span class="string">&quot;Unknown command line argument: &quot;</span> + argv[i]);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	......</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 启动的SystemServer进程</span></span><br><span class="line">	<span class="keyword">if</span> (startSystemServer) &#123;</span><br><span class="line">		startSystemServer(abiList, socketName);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	......</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</blockquote>
-<h2 id="6、SystemServer-进程启动"><a href="#6、SystemServer-进程启动" class="headerlink" title="6、SystemServer 进程启动"></a>6、SystemServer 进程启动</h2><ol>
-<li>创建并启动 Binder 线程池，这样可以和其他进程进行通信；</li>
-<li>创建 SystemServiceManager，启用于对系统的服务进行创建、启动和生命周期的管理；</li>
-<li>启动系统中的各种服务，如我们熟悉的 AMS、PMS、WMS。</li>
-</ol>
-<blockquote>
-<p>源码文件路径：<code>/frameworks/base/services/java/com/android/server/SystemServer.java</code></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">SystemServer</span> &#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// The main entry point from zygote.</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">		<span class="keyword">new</span> <span class="title class_">SystemServer</span>().run();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="title function_">SystemServer</span><span class="params">()</span> &#123;</span><br><span class="line">	<span class="comment">// Check for factory test mode.</span></span><br><span class="line">		mFactoryTestMode = FactoryTest.getMode();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line"></span><br><span class="line">		......</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 初始化原生服务库</span></span><br><span class="line">		System.loadLibrary(<span class="string">&quot;android_servers&quot;</span>);</span><br><span class="line">		nativeInit();</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 初始化系统上下文</span></span><br><span class="line">		createSystemContext();</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 创建SystemServiceManager对象</span></span><br><span class="line">		mSystemServiceManager = <span class="keyword">new</span> <span class="title class_">SystemServiceManager</span>(mSystemContext);</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 开启服务</span></span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			startBootstrapServices();</span><br><span class="line">			startCoreServices();</span><br><span class="line">			startOtherServices();</span><br><span class="line">		&#125; <span class="keyword">catch</span> (Throwable ex) &#123;</span><br><span class="line">			Slog.e(<span class="string">&quot;System&quot;</span>, <span class="string">&quot;******************************************&quot;</span>);</span><br><span class="line">			Slog.e(<span class="string">&quot;System&quot;</span>, <span class="string">&quot;************ Failure starting system services&quot;</span>, ex);</span><br><span class="line">			<span class="keyword">throw</span> ex;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		......</span><br><span class="line"></span><br><span class="line">		<span class="comment">// Loop forever.</span></span><br><span class="line">		Looper.loop();</span><br><span class="line">		<span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(<span class="string">&quot;Main thread loop unexpectedly exited&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line"> </span><br><span class="line">	<span class="comment">// 初始化系统上下文对象mSystemContext，并设置默认的主题。</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">createSystemContext</span><span class="params">()</span> &#123;</span><br><span class="line">		<span class="type">ActivityThread</span> <span class="variable">activityThread</span> <span class="operator">=</span> ActivityThread.systemMain();</span><br><span class="line">		mSystemContext = activityThread.getSystemContext();</span><br><span class="line">		mSystemContext.setTheme(android.R.style.Theme_DeviceDefault_Light_DarkActionBar);</span><br><span class="line">	&#125;</span><br><span class="line"> </span><br><span class="line">	<span class="comment">// 在这里开启了几个核心的服务，因为这些服务之间相互依赖，所以都放在了这个方法里面。</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">startBootstrapServices</span><span class="params">()</span> &#123;</span><br><span class="line"></span><br><span class="line">		......</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 初始化ActivityManagerService</span></span><br><span class="line">		mActivityManagerService = mSystemServiceManager</span><br><span class="line">			.startService(ActivityManagerService.Lifecycle.class).getService();</span><br><span class="line">		mActivityManagerService.setSystemServiceManager(mSystemServiceManager);</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 初始化PowerManagerService，因为其他服务需要依赖这个Service，因此需要尽快的初始化</span></span><br><span class="line">		mPowerManagerService = mSystemServiceManager</span><br><span class="line">			.startService(PowerManagerService.class);</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 现在电源管理已经开启，ActivityManagerService负责电源管理功能</span></span><br><span class="line">		mActivityManagerService.initPowerManagement();</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 开启DisplayManagerService</span></span><br><span class="line">		mDisplayManagerService = mSystemServiceManager</span><br><span class="line">		.startService(DisplayManagerService.class);</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 开启PackageManagerService</span></span><br><span class="line">		mPackageManagerService = PackageManagerService.main(mSystemContext,mInstaller,</span><br><span class="line">		mFactoryTestMode != FactoryTest.FACTORY_TEST_OFF, mOnlyCore);</span><br><span class="line"></span><br><span class="line">		......</span><br><span class="line">	&#125;</span><br><span class="line"> </span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">startCoreServices</span><span class="params">()</span> &#123;...&#125;<span class="comment">// 启动一些基本服务。</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">startOtherServices</span><span class="params">()</span> &#123;...&#125;<span class="comment">// 启动其他服务。</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</blockquote>
-<p>从上面 <code>SystemServer.java</code> 代码中可以看出，在 SystemServer 进程开启的时候，就会初始化 <code>ActivityManagerService</code>。同时，会加载本地系统的服务库，调用 <code>createSystemContext()</code> 创建系统上下文，创建 <code>ActivityThread</code> 及开启各种服务等等。</p>
-<h2 id="7、Launcher-启动"><a href="#7、Launcher-启动" class="headerlink" title="7、Launcher 启动"></a>7、Launcher 启动</h2><p><code>SystemServer</code> 启动的 <code>ActivityManagerService</code> 后，会调用 <code>finishBooting()</code>，完成引导过程。同时发送开机广播 <code>ACTION_BOOT_COMPLETED</code>。然后启动 Launcher，Launcher 启动后会将已安装应用的图标显示在桌面上。</p>
-<blockquote>
-<p>源码文件路径：<code>/frameworks/base/services/core/java/com/android/server/am/ActivityManagerService.java</code></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="keyword">void</span> <span class="title function_">finishBooting</span><span class="params">()</span> &#123;</span><br><span class="line">	......</span><br><span class="line">	<span class="keyword">final</span> <span class="type">int</span> <span class="variable">userId</span> <span class="operator">=</span> mStartedUsers.keyAt(i);</span><br><span class="line">    <span class="type">Intent</span> <span class="variable">intent</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Intent</span>(Intent.ACTION_BOOT_COMPLETED, <span class="literal">null</span>);</span><br><span class="line">    intent.putExtra(Intent.EXTRA_USER_HANDLE, userId);</span><br><span class="line">    intent.addFlags(Intent.FLAG_RECEIVER_NO_ABORT);</span><br><span class="line">    broadcastIntentLocked(...);</span><br><span class="line">	......</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</blockquote>
-<h2 id="系统启动相关问题"><a href="#系统启动相关问题" class="headerlink" title="系统启动相关问题"></a>系统启动相关问题</h2><h3 id="1、简述Android-系统启动流程"><a href="#1、简述Android-系统启动流程" class="headerlink" title="1、简述Android 系统启动流程"></a>1、简述Android 系统启动流程</h3><p>当按电源键触发开机，首先会从 ROM 中预定义的地方加载引导程序 BootLoader 到 RAM 中，并执行 BootLoader 程序启动 Linux Kernel，然后启动用户级别的第一个进程：init 进程。init 进程会解析init.rc 脚本做一些初始化工作，包括挂载文件系统、创建工作目录以及启动系统服务进程等，其中系统服务进程包括 Zygote、service manager、media 等。在 Zygote 中会进一步去启动 system_server 进程，然后在 system_server 进程中会启动 AMS、WMS、PMS 等服务，等这些服务启动之后，AMS 中就会打开 Launcher 应用的 HomeActivity，最终就看到了手机的 “桌面”。</p>
-<h3 id="2、system-server-为什么要在-Zygote-中启动，而不是由-init-直接启动呢？"><a href="#2、system-server-为什么要在-Zygote-中启动，而不是由-init-直接启动呢？" class="headerlink" title="2、system_server 为什么要在 Zygote 中启动，而不是由 init 直接启动呢？"></a>2、system_server 为什么要在 Zygote 中启动，而不是由 init 直接启动呢？</h3><p>Zygote 作为一个孵化器，可以提前加载一些资源，这样 fork() 时基于 Copy-On-Write 机制创建的其他进程就能直接使用这些资源，而不用重新加载。比如 system_server 就可以直接使用 Zygote 中的 JNI函数、共享库、常用的类、以及主题资源。</p>
-<h3 id="3、为什么要专门使用-Zygote-进程去孵化应用进程，而不是让-system-server-去孵化呢？"><a href="#3、为什么要专门使用-Zygote-进程去孵化应用进程，而不是让-system-server-去孵化呢？" class="headerlink" title="3、为什么要专门使用 Zygote 进程去孵化应用进程，而不是让 system_server 去孵化呢？"></a>3、为什么要专门使用 Zygote 进程去孵化应用进程，而不是让 system_server 去孵化呢？</h3><p>首先 system_server 相比 Zygote 多运行了 AMS、WMS 等服务，这些对一个应用程序来说是不需要的。另外进程的 fork() 对多线程不友好，仅会将发起调用的线程拷贝到子进程，这可能会导致死锁，而system_server 中肯定是有很多线程的。</p>
-<h3 id="4、描述下是怎么导致死锁的"><a href="#4、描述下是怎么导致死锁的" class="headerlink" title="4、描述下是怎么导致死锁的"></a>4、描述下是怎么导致死锁的</h3><p>在 POSIX 标准中，fork 的行为是这样的：复制整个用户空间的数据（通常使用 copy-on-write 的策略，所以可以实现的速度很快）以及所有系统对象，然后仅复制当前线程到子进程。这里：所有父进程中别的线程，到了子进程中都是突然蒸发掉的</p>
-<p>对于锁来说，从 OS 看，每个锁有一个所有者，即最后一次 lock 它的线程。假设这么一个环境，在 fork之前，有一个子线程 lock 了某个锁，获得了对锁的所有权。fork 以后，在子进程中，所有的额外线程都人间蒸发了。而锁却被正常复制了，在子进程看来，这个锁没有主人，所以没有任何人可以对它解锁。当子进程想 lock 这个锁时，不再有任何手段可以解开了。程序发生死锁。</p>
-<h3 id="5、Zygote-为什么不采用-Binder-机制进行-IPC-通信"><a href="#5、Zygote-为什么不采用-Binder-机制进行-IPC-通信" class="headerlink" title="5、Zygote 为什么不采用 Binder 机制进行 IPC 通信"></a>5、Zygote 为什么不采用 Binder 机制进行 IPC 通信</h3><p>Binder 机制中存在 Binder 线程池，是多线程的，如果 Zygote 采用 Binder 的话就存在上面说的fork() 与 多线程的问题了。其实严格来说，Binder 机制不一定要多线程，所谓的 Binder 线程只不过是在循环读取 Binder 驱动的消息而已，只注册一个 Binder 线程也是可以工作的，比如 service manager就是这样的。实际上 Zygote 尽管没有采取 Binder 机制，它也不是单线程的，但它在 fork() 前主动停止了其他线程，fork() 后重新启动了。</p>
-]]></content>
-      <categories>
-        <category>Android</category>
-      </categories>
-      <tags>
-        <tag>BootLoader</tag>
       </tags>
   </entry>
   <entry>
@@ -790,6 +701,95 @@
       <tags>
         <tag>C++</tag>
         <tag>CMake</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Android 开机启动流程</title>
+    <url>/posts/ce79/</url>
+    <content><![CDATA[<h1 id="Android-开机启动流程"><a href="#Android-开机启动流程" class="headerlink" title="Android 开机启动流程"></a>Android 开机启动流程</h1><p>Android 系统完整的启动流程，从系统层次角度可分为 Linux 系统层、Android 系统服务层、Zygote 进程模型三个阶段。</p>
+<p>从开机到启动 Home Launcher 完成具体的任务细节可分为七个步骤：</p>
+<p><img src="/images/loading.gif" data-original="https://github.com/winter-ruize/blog_images/raw/main/images/2024/01/31/1706702688201.png" alt="image-20230202140213148"></p>
+<p><strong>启动流程图如下：</strong></p>
+<p><img src="/images/loading.gif" data-original="https://github.com/winter-ruize/blog_images/raw/main/images/2024/01/31/1706702688312.png" alt="image-20230202144415699"></p>
+<h2 id="1、启动电源以及系统启动"><a href="#1、启动电源以及系统启动" class="headerlink" title="1、启动电源以及系统启动"></a>1、启动电源以及系统启动</h2><p>当电源按钮按下时引导芯片从预定义的地方（固化在ROM）开始执行。加载引导程序BootLoader到RAM中，然后执行。</p>
+<h2 id="2、引导程序-BootLoader"><a href="#2、引导程序-BootLoader" class="headerlink" title="2、引导程序 BootLoader"></a>2、引导程序 BootLoader</h2><p>引导程序 BootLoader 是在 Android 操作系统开始运行前的一个小程序，是运行的第一个程序。主要有检查RAM，初始化硬件参数等功能，当然它的最终目的是把操作系统给拉起来。</p>
+<blockquote>
+<p>源码文件路径：<code>/bootable/bootloader/legacy/</code></p>
+<p>BootLoader的主要功能分析：</p>
+<p>其实 Bootloader 主要的必须的作用只有一个：就是把操作系统映像文件拷贝到 RAM 中去，然后跳转到它的入口处去执行，我们称之为启动加载模式，该过程没有用户的介入，是它正常工作的模式。它的步骤如下：</p>
+<p>Stage1:</p>
+<ol>
+<li>硬件设备初始化。为 stage2 的执行及随后内核的执行准备好基本的硬件环境</li>
+<li>为加载 stage2 准备 RAM 空间。为了获得更好的执行速度，通常吧 stage2 加载到 RAM 中执行</li>
+<li>复制 stage2 的代码到 RAM 中</li>
+<li>设置好堆栈</li>
+<li>跳转到 stage2 的 c 程序入口</li>
+</ol>
+<p>Stage2：</p>
+<ol>
+<li>初始化本阶段要使用的硬件设备</li>
+<li>检测系统内存映射</li>
+<li>将内核映像和根文件系统映像从 flash 读到 RAM 中</li>
+<li>为内核设置启动参数</li>
+<li>调用内核</li>
+</ol>
+</blockquote>
+<h2 id="3、Linux-内核启动"><a href="#3、Linux-内核启动" class="headerlink" title="3、Linux 内核启动"></a>3、Linux 内核启动</h2><p>当内核启动时，设置缓存、被保护存储器、计划列表、加载驱动。当内核完成系统设置后，它首先会在系统文件中寻找 init.rc 文件，并启动 <strong>init.rc 进程</strong>。</p>
+<p>这个入口的函数是 <code>start_kernel</code> 函数。 <code>start_kernel</code> 函数完成了内核的大部分初始化工作。实际上，可以将 <code>start_kernel</code> 函数看做内核的main函数。 <code>start_kernel</code> 函数执行到最后调用了 <code>reset_init</code> 函数进行后续的初始化。 <code>reset_init</code> 函数最主要的任务就是启动内核线程 <code>kernel_init</code>。<code>kernel_init</code> 函数将完成设备驱动程序的初始化，并调用 <code>init_post</code> 函数启动用户空间的 init 进程。到 <code>init_post</code> 函数为止，内核的初始化已经基本完成。</p>
+<blockquote>
+<p>源码文件路径：<code>/kernel_imx/init/main.c</code></p>
+</blockquote>
+<h2 id="4、init-进程启动"><a href="#4、init-进程启动" class="headerlink" title="4、init 进程启动"></a>4、init 进程启动</h2><p>当初始化内核之后，就会启动一个相当重要的祖先进程，也就是 <strong>init 进程</strong>，在Linux中所有的进程都是由 init 进程直接或间接 fork 出来的。init 进程负责创建系统中最关键的几个子进程，尤其是 Zygote。另外，它还提供了 property service（属性服务），类似于 windows 系统的注册表服务。</p>
+<p>init进程会完成很多工作，主要完成以下三件事：</p>
+<ol>
+<li>创建和挂载启动所需文件目录；</li>
+<li>初始化和启动系统属性服务；</li>
+<li>解析 init.rc 配置文件并启动 Zygote 进程。</li>
+</ol>
+<p>在Android系统中，会有个 <code>init.rc</code> 脚本。init 进程一启动就会读取并解析这个脚本文件，把其中的元素整理成自己的数据结构（链表）。</p>
+<blockquote>
+<p>源码文件路径：<br><code>/system/core/init/init.c</code><br><code>/system/core/rootdir/init.rc</code><br><code>/system/core/init/readme.txt</code></p>
+</blockquote>
+<h2 id="5、Zygote-进程启动"><a href="#5、Zygote-进程启动" class="headerlink" title="5、Zygote 进程启动"></a>5、Zygote 进程启动</h2><p>Zygote 进程为所有 Java 进程的父进程。主要会完成以下任务：</p>
+<ol>
+<li>创建 Java 虚拟机并为 Java 虚拟机注册 JNI 方法；</li>
+<li>创建服务端 Socket；</li>
+<li>预加载类和资源；</li>
+<li>启动 SystemServer进程；</li>
+<li>等待 AMS 请求创建新的应用进程。</li>
+</ol>
+<p>在zygote开启的时候，会调用 <code>ZygoteInit.main()</code> 进行初始化。源码如下：</p>
+<blockquote>
+<p>源码文件路径：<code>/frameworks/base/core/java/com/android/internal/os/ZygoteInit.java</code></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String argv[])</span> &#123;</span><br><span class="line"></span><br><span class="line">	......</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 加载zygote的时候，会传入参数，startSystemServer 变为true</span></span><br><span class="line">    <span class="type">boolean</span> <span class="variable">startSystemServer</span> <span class="operator">=</span> <span class="literal">false</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt; argv.length; i++) &#123;</span><br><span class="line">		<span class="keyword">if</span> (<span class="string">&quot;start-system-server&quot;</span>.equals(argv[i])) &#123;</span><br><span class="line">			startSystemServer = <span class="literal">true</span>;</span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> (argv[i].startsWith(ABI_LIST_ARG)) &#123;</span><br><span class="line">			abiList = argv[i].substring(ABI_LIST_ARG.length());</span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> (argv[i].startsWith(SOCKET_NAME_ARG)) &#123;</span><br><span class="line">			socketName = argv[i].substring(SOCKET_NAME_ARG.length());</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(<span class="string">&quot;Unknown command line argument: &quot;</span> + argv[i]);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	......</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 启动的SystemServer进程</span></span><br><span class="line">	<span class="keyword">if</span> (startSystemServer) &#123;</span><br><span class="line">		startSystemServer(abiList, socketName);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	......</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h2 id="6、SystemServer-进程启动"><a href="#6、SystemServer-进程启动" class="headerlink" title="6、SystemServer 进程启动"></a>6、SystemServer 进程启动</h2><ol>
+<li>创建并启动 Binder 线程池，这样可以和其他进程进行通信；</li>
+<li>创建 SystemServiceManager，启用于对系统的服务进行创建、启动和生命周期的管理；</li>
+<li>启动系统中的各种服务，如我们熟悉的 AMS、PMS、WMS。</li>
+</ol>
+<blockquote>
+<p>源码文件路径：<code>/frameworks/base/services/java/com/android/server/SystemServer.java</code></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">SystemServer</span> &#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// The main entry point from zygote.</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">		<span class="keyword">new</span> <span class="title class_">SystemServer</span>().run();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="title function_">SystemServer</span><span class="params">()</span> &#123;</span><br><span class="line">	<span class="comment">// Check for factory test mode.</span></span><br><span class="line">		mFactoryTestMode = FactoryTest.getMode();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line"></span><br><span class="line">		......</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 初始化原生服务库</span></span><br><span class="line">		System.loadLibrary(<span class="string">&quot;android_servers&quot;</span>);</span><br><span class="line">		nativeInit();</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 初始化系统上下文</span></span><br><span class="line">		createSystemContext();</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 创建SystemServiceManager对象</span></span><br><span class="line">		mSystemServiceManager = <span class="keyword">new</span> <span class="title class_">SystemServiceManager</span>(mSystemContext);</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 开启服务</span></span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			startBootstrapServices();</span><br><span class="line">			startCoreServices();</span><br><span class="line">			startOtherServices();</span><br><span class="line">		&#125; <span class="keyword">catch</span> (Throwable ex) &#123;</span><br><span class="line">			Slog.e(<span class="string">&quot;System&quot;</span>, <span class="string">&quot;******************************************&quot;</span>);</span><br><span class="line">			Slog.e(<span class="string">&quot;System&quot;</span>, <span class="string">&quot;************ Failure starting system services&quot;</span>, ex);</span><br><span class="line">			<span class="keyword">throw</span> ex;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		......</span><br><span class="line"></span><br><span class="line">		<span class="comment">// Loop forever.</span></span><br><span class="line">		Looper.loop();</span><br><span class="line">		<span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(<span class="string">&quot;Main thread loop unexpectedly exited&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line"> </span><br><span class="line">	<span class="comment">// 初始化系统上下文对象mSystemContext，并设置默认的主题。</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">createSystemContext</span><span class="params">()</span> &#123;</span><br><span class="line">		<span class="type">ActivityThread</span> <span class="variable">activityThread</span> <span class="operator">=</span> ActivityThread.systemMain();</span><br><span class="line">		mSystemContext = activityThread.getSystemContext();</span><br><span class="line">		mSystemContext.setTheme(android.R.style.Theme_DeviceDefault_Light_DarkActionBar);</span><br><span class="line">	&#125;</span><br><span class="line"> </span><br><span class="line">	<span class="comment">// 在这里开启了几个核心的服务，因为这些服务之间相互依赖，所以都放在了这个方法里面。</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">startBootstrapServices</span><span class="params">()</span> &#123;</span><br><span class="line"></span><br><span class="line">		......</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 初始化ActivityManagerService</span></span><br><span class="line">		mActivityManagerService = mSystemServiceManager</span><br><span class="line">			.startService(ActivityManagerService.Lifecycle.class).getService();</span><br><span class="line">		mActivityManagerService.setSystemServiceManager(mSystemServiceManager);</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 初始化PowerManagerService，因为其他服务需要依赖这个Service，因此需要尽快的初始化</span></span><br><span class="line">		mPowerManagerService = mSystemServiceManager</span><br><span class="line">			.startService(PowerManagerService.class);</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 现在电源管理已经开启，ActivityManagerService负责电源管理功能</span></span><br><span class="line">		mActivityManagerService.initPowerManagement();</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 开启DisplayManagerService</span></span><br><span class="line">		mDisplayManagerService = mSystemServiceManager</span><br><span class="line">		.startService(DisplayManagerService.class);</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 开启PackageManagerService</span></span><br><span class="line">		mPackageManagerService = PackageManagerService.main(mSystemContext,mInstaller,</span><br><span class="line">		mFactoryTestMode != FactoryTest.FACTORY_TEST_OFF, mOnlyCore);</span><br><span class="line"></span><br><span class="line">		......</span><br><span class="line">	&#125;</span><br><span class="line"> </span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">startCoreServices</span><span class="params">()</span> &#123;...&#125;<span class="comment">// 启动一些基本服务。</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">startOtherServices</span><span class="params">()</span> &#123;...&#125;<span class="comment">// 启动其他服务。</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>从上面 <code>SystemServer.java</code> 代码中可以看出，在 SystemServer 进程开启的时候，就会初始化 <code>ActivityManagerService</code>。同时，会加载本地系统的服务库，调用 <code>createSystemContext()</code> 创建系统上下文，创建 <code>ActivityThread</code> 及开启各种服务等等。</p>
+<h2 id="7、Launcher-启动"><a href="#7、Launcher-启动" class="headerlink" title="7、Launcher 启动"></a>7、Launcher 启动</h2><p><code>SystemServer</code> 启动的 <code>ActivityManagerService</code> 后，会调用 <code>finishBooting()</code>，完成引导过程。同时发送开机广播 <code>ACTION_BOOT_COMPLETED</code>。然后启动 Launcher，Launcher 启动后会将已安装应用的图标显示在桌面上。</p>
+<blockquote>
+<p>源码文件路径：<code>/frameworks/base/services/core/java/com/android/server/am/ActivityManagerService.java</code></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="keyword">void</span> <span class="title function_">finishBooting</span><span class="params">()</span> &#123;</span><br><span class="line">	......</span><br><span class="line">	<span class="keyword">final</span> <span class="type">int</span> <span class="variable">userId</span> <span class="operator">=</span> mStartedUsers.keyAt(i);</span><br><span class="line">    <span class="type">Intent</span> <span class="variable">intent</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Intent</span>(Intent.ACTION_BOOT_COMPLETED, <span class="literal">null</span>);</span><br><span class="line">    intent.putExtra(Intent.EXTRA_USER_HANDLE, userId);</span><br><span class="line">    intent.addFlags(Intent.FLAG_RECEIVER_NO_ABORT);</span><br><span class="line">    broadcastIntentLocked(...);</span><br><span class="line">	......</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h2 id="系统启动相关问题"><a href="#系统启动相关问题" class="headerlink" title="系统启动相关问题"></a>系统启动相关问题</h2><h3 id="1、简述Android-系统启动流程"><a href="#1、简述Android-系统启动流程" class="headerlink" title="1、简述Android 系统启动流程"></a>1、简述Android 系统启动流程</h3><p>当按电源键触发开机，首先会从 ROM 中预定义的地方加载引导程序 BootLoader 到 RAM 中，并执行 BootLoader 程序启动 Linux Kernel，然后启动用户级别的第一个进程：init 进程。init 进程会解析init.rc 脚本做一些初始化工作，包括挂载文件系统、创建工作目录以及启动系统服务进程等，其中系统服务进程包括 Zygote、service manager、media 等。在 Zygote 中会进一步去启动 system_server 进程，然后在 system_server 进程中会启动 AMS、WMS、PMS 等服务，等这些服务启动之后，AMS 中就会打开 Launcher 应用的 HomeActivity，最终就看到了手机的 “桌面”。</p>
+<h3 id="2、system-server-为什么要在-Zygote-中启动，而不是由-init-直接启动呢？"><a href="#2、system-server-为什么要在-Zygote-中启动，而不是由-init-直接启动呢？" class="headerlink" title="2、system_server 为什么要在 Zygote 中启动，而不是由 init 直接启动呢？"></a>2、system_server 为什么要在 Zygote 中启动，而不是由 init 直接启动呢？</h3><p>Zygote 作为一个孵化器，可以提前加载一些资源，这样 fork() 时基于 Copy-On-Write 机制创建的其他进程就能直接使用这些资源，而不用重新加载。比如 system_server 就可以直接使用 Zygote 中的 JNI函数、共享库、常用的类、以及主题资源。</p>
+<h3 id="3、为什么要专门使用-Zygote-进程去孵化应用进程，而不是让-system-server-去孵化呢？"><a href="#3、为什么要专门使用-Zygote-进程去孵化应用进程，而不是让-system-server-去孵化呢？" class="headerlink" title="3、为什么要专门使用 Zygote 进程去孵化应用进程，而不是让 system_server 去孵化呢？"></a>3、为什么要专门使用 Zygote 进程去孵化应用进程，而不是让 system_server 去孵化呢？</h3><p>首先 system_server 相比 Zygote 多运行了 AMS、WMS 等服务，这些对一个应用程序来说是不需要的。另外进程的 fork() 对多线程不友好，仅会将发起调用的线程拷贝到子进程，这可能会导致死锁，而system_server 中肯定是有很多线程的。</p>
+<h3 id="4、描述下是怎么导致死锁的"><a href="#4、描述下是怎么导致死锁的" class="headerlink" title="4、描述下是怎么导致死锁的"></a>4、描述下是怎么导致死锁的</h3><p>在 POSIX 标准中，fork 的行为是这样的：复制整个用户空间的数据（通常使用 copy-on-write 的策略，所以可以实现的速度很快）以及所有系统对象，然后仅复制当前线程到子进程。这里：所有父进程中别的线程，到了子进程中都是突然蒸发掉的</p>
+<p>对于锁来说，从 OS 看，每个锁有一个所有者，即最后一次 lock 它的线程。假设这么一个环境，在 fork之前，有一个子线程 lock 了某个锁，获得了对锁的所有权。fork 以后，在子进程中，所有的额外线程都人间蒸发了。而锁却被正常复制了，在子进程看来，这个锁没有主人，所以没有任何人可以对它解锁。当子进程想 lock 这个锁时，不再有任何手段可以解开了。程序发生死锁。</p>
+<h3 id="5、Zygote-为什么不采用-Binder-机制进行-IPC-通信"><a href="#5、Zygote-为什么不采用-Binder-机制进行-IPC-通信" class="headerlink" title="5、Zygote 为什么不采用 Binder 机制进行 IPC 通信"></a>5、Zygote 为什么不采用 Binder 机制进行 IPC 通信</h3><p>Binder 机制中存在 Binder 线程池，是多线程的，如果 Zygote 采用 Binder 的话就存在上面说的fork() 与 多线程的问题了。其实严格来说，Binder 机制不一定要多线程，所谓的 Binder 线程只不过是在循环读取 Binder 驱动的消息而已，只注册一个 Binder 线程也是可以工作的，比如 service manager就是这样的。实际上 Zygote 尽管没有采取 Binder 机制，它也不是单线程的，但它在 fork() 前主动停止了其他线程，fork() 后重新启动了。</p>
+]]></content>
+      <categories>
+        <category>Android</category>
+      </categories>
+      <tags>
+        <tag>BootLoader</tag>
       </tags>
   </entry>
   <entry>
